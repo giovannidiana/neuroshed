@@ -1,0 +1,16 @@
+#!/bin/bash
+
+NAS="/Volumes/Imaging Backup"
+proc_folder=$1
+
+folder=$proc_folder
+
+imlist=`ls "$NAS/$folder" | grep AutoStack13 | sort -tx -k2.10 -n`
+for image in $imlist; do
+	echo $image
+	ID=`expr "$image" : '.*AutoStack\(.*\).tiff'`
+    echo $proc_folder $ID
+	ws3D "$NAS/$folder/$image" $ID $proc_folder 1 2 300
+done
+
+

@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#NAS=/run/user/1000/gvfs/afp-volume:host=QL-DiskStation1.local,user=user,volume=QLdata/EugeniExpressionData
+NAS="/media/diana/Imaging Backup"
+
+flist=$(cat folderlist.txt)
+nproc=0
+
+for subdir in $flist; do
+	 #folder=`expr $subdir : '.*/\(.*\)/'`
+     folder=$subdir
+	 imlist=`ls "$NAS/$folder" | grep AutoStack`
+	 #proc_folder=`expr $folder : '.*-\(.*\)-'` 
+	 proc_folder=$subdir
+	 for image in $imlist; do
+		 echo $image
+		 ID=`expr "$image" : '.*AutoStack\(.*\).tiff'`
+		 echo $nproc_folder $ID
+		 while [ $nproc -ge 8 ]; do 
+			 sleep 10
+			 nproc=$(ps aux | grep autows3D | wc -l)
+		 done
+		 if [ $nproc -lt 8 ]; then
+			 ./autows3D "$NAS/$folder/$image" $ID $proc_folder 1 2 300 &
+			 sleep 3
+			 nproc=$(ps aux | grep autows3D | wc -l)
+		 fi
+	 done
+done
+
+
